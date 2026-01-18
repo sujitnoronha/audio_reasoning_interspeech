@@ -210,3 +210,5 @@ __marimo__/
 *.wav
 
 src/data/audio/*
+
+src/data/MMAR-meta.json
