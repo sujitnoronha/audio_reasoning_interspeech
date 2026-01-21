@@ -216,3 +216,9 @@ src/data/MMAR-meta.json
 models/*
 
 outputs/*
+
+src/data/reasonaqa/*
+
+# Submission artifacts
+*.zip
+
