@@ -1,0 +1,24 @@
+{
+  "baseline": {
+    "summary": {
+      "model_name": "baseline",
+      "total_samples": 0,
+      "correct": 0,
+      "accuracy": 0,
+      "errors": 20,
+      "dataset_stats": {}
+    },
+    "results": []
+  },
+  "finetuned": {
+    "summary": {
+      "model_name": "finetuned",
+      "total_samples": 0,
+      "correct": 0,
+      "accuracy": 0,
+      "errors": 20,
+      "dataset_stats": {}
+    },
+    "results": []
+  }
+}

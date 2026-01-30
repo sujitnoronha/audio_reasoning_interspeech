@@ -1,0 +1,488 @@
+{
+  "baseline": {
+    "summary": {
+      "model_name": "baseline",
+      "total_samples": 20,
+      "correct": 7,
+      "accuracy": 0.35,
+      "errors": 0,
+      "dataset_stats": {
+        "musicbench": {
+          "correct": 4,
+          "total": 11,
+          "accuracy": 0.36363636363636365
+        },
+        "countingqa": {
+          "correct": 3,
+          "total": 9,
+          "accuracy": 0.3333333333333333
+        }
+      }
+    },
+    "results": [
+      {
+        "id": "7pdrGzdWMzI_1",
+        "dataset": "musicbench",
+        "question": "What key is the melody of the audio played in? Choose the correct option from the following options:\n(A) F minor\n(B) C major\n(C) G major\n(D) A minor",
+        "ground_truth": "F minor",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " of the audio played in? Choose the correct option from the following options:\n(A) F minor\n(B) C major\n(C) G major\n(D) A minor\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the musical key of the provided audio clip from a list of four options: (A) F minor, (B) C major, (C) G major, (D) A minor. Then, the audio is a short, synthesized melody with a somewhat dramatic, minor-key feel. It's a loop of a few seconds. Next, I identified the tonal center by li",
+        "is_correct": true
+      },
+      {
+        "id": "0M7nETLOsKQ_10",
+        "dataset": "musicbench",
+        "question": "What instrument provides the gentle and soothing notes that support the male vocalist in the audio? Choose the correct option from the following options:\n(A) Guitar\n(B) Violin\n(C) Piano\n(D) Drums",
+        "ground_truth": "Piano",
+        "correct_letter": "C",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " in the audio? Choose the correct option from the following options:\n(A) Guitar\n(B) Violin\n(C) Piano\n(D) Drums\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the instrument providing gentle and soothing notes that support the male vocalist in the audio clip, with the given options being (A) Guitar, (B) Violin, (C) Piano, and (D) Drums. Then, the audio begins with a chord played on a keyboard instrument, followed by a slow, melodic progression of chords; ",
+        "is_correct": false
+      },
+      {
+        "id": "concat_4840",
+        "dataset": "countingqa",
+        "question": "How often do you hear the mouse clicking in this audio?\n\nChoose the correct option:\n(A) Four times\n(B) Never\n(C) Three times\n(D) Twice",
+        "ground_truth": "Three times",
+        "correct_letter": "C",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants to know how many times the sound of a mouse clicking is heard in the provided audio file, and they've given four multiple-choice options to choose from. Then, I analyzed the audio by listening carefully to identify the specific sound of a mouse click, which is a short, sharp, high-pitched 'click' sound. During the first pass, I heard the following sequence: from 00:00 to 00:01, a rapid series of clicks (about 5-6 clicks) ",
+        "is_correct": false
+      },
+      {
+        "id": "SU9ZP2pbqyU_8",
+        "dataset": "musicbench",
+        "question": "What is the primary instrument that introduces the lively atmosphere in the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Electric Guitar\n(C) Acoustic Guitar\n(D) Violin",
+        "ground_truth": "Acoustic Guitar",
+        "correct_letter": "C",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Electric Guitar\n(C) Acoustic Guitar\n(D) Violin\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the primary instrument that creates the 'lively atmosphere' in the provided audio clip, with the given choices being (A) Piano, (B) Electric Guitar, (C) Acoustic Guitar, and (D) Violin. Then, the audio begins immediately with a string instrument playing a fast, rhythmic, and melodic ",
+        "is_correct": false
+      },
+      {
+        "id": "concat_1759",
+        "dataset": "countingqa",
+        "question": "What is the first sound you hear in this audio?\n\nChoose the correct option:\n(A) Glass shattering\n(B) Clock ticking\n(C) Footsteps\n(D) Doorbell ringing",
+        "ground_truth": "Doorbell ringing",
+        "correct_letter": "D",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " hear in this audio?\n\nChoose the correct option:\n(A) Glass shattering\n(B) Clock ticking\n(C) Footsteps\n(D) Doorbell ringing\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the very first sound in the provided audio clip and choose the correct option from a multiple-choice list. Then, the audio starts immediately with a clear, melodic, two-tone chime sound that is very characteristic of a doorbell, especially a modern one with a chime feature; after this in",
+        "is_correct": false
+      },
+      {
+        "id": "concat_6170",
+        "dataset": "countingqa",
+        "question": "How many times does the door slamming occur in the audio?\n\nChoose the correct option:\n(A) Three times\n(B) Twice\n(C) Four times\n(D) Once",
+        "ground_truth": "Three times",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to count the number of times a door slams in the provided audio. Then, I analyzed the audio by listening carefully: from 00:00 to 00:01 there is a doorbell sound, from 00:01 to 00:04 there is a whistling sound, from 00:04 to 00:06 there is a loud door slam, from 00:06 to 00:08 there is another loud door slam, and from 00:08 to 00:10 there is a third loud door slam. Next, I counted the door slams and found three distinc",
+        "is_correct": true
+      },
+      {
+        "id": "concat_2375",
+        "dataset": "countingqa",
+        "question": "Count the number of times the glass breaking happens.\n\nChoose the correct option:\n(A) Never\n(B) Twice\n(C) Three times\n(D) Four times",
+        "ground_truth": "Three times",
+        "correct_letter": "C",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "Count the number of times the glass breaking happens.\n\nChoose the correct option:\n(A) Never\n(B) Twice\n(C) Three times\n(D) Four times\nassistant\n<think>\nGot it, let's count the glass breaking sounds. First, listen to the audio. The first glass breaking is around 00:02, then another at 00:05, and a third at 00:08. Let's check again. The sounds are distinct: first break, second break, third break. So that's three times. The options are (C) Three times.\n</think>\n\nTo determine the number of times glas",
+        "is_correct": false
+      },
+      {
+        "id": "concat_5450",
+        "dataset": "countingqa",
+        "question": "What is the first sound you hear in this audio?\n\nChoose the correct option:\n(A) Rain falling\n(B) Car horn honking\n(C) Bird chirping\n(D) Thunder rumbling",
+        "ground_truth": "Rain falling",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "<think>\nGot it, let's tackle the problem. First, the user wants me to identify the very first sound in the provided audio clip. Then, the audio starts immediately with a loud, continuous, hissing, and rushing sound. It sounds like a large amount of water moving very quickly. Next, evaluating the options: (A) Rain falling is a possibility because heavy rain can sound like a continuous hiss or roar, but this sound is very intense and has a powerful, rushing quality that is more characteristic of a",
+        "is_correct": true
+      },
+      {
+        "id": "1IK4OeOqAEo_10",
+        "dataset": "musicbench",
+        "question": "What is the primary musical instrument used in the audio to accompany the melody? Choose the correct option from the following options:\n(A) Guitar\n(B) Piano\n(C) Violin\n(D) Drums",
+        "ground_truth": "Piano",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " melody? Choose the correct option from the following options:\n(A) Guitar\n(B) Piano\n(C) Violin\n(D) Drums\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the primary musical instrument accompanying the melody in the provided audio clip, with the given choices being (A) Guitar, (B) Piano, (C) Violin, and (D) Drums. Then, the audio features a clear, high-pitched melody played by a synthesized or digital instrument that sounds like a bell or music box, and un",
+        "is_correct": false
+      },
+      {
+        "id": "BQ_KrefFiTw_10",
+        "dataset": "musicbench",
+        "question": "Which instrument provides the melody in the audio? Choose the correct option from the following options:\n(A) Tar\n(B) Daf\n(C) Setar\n(D) Santur",
+        "ground_truth": "Tar",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " the melody in the audio? Choose the correct option from the following options:\n(A) Tar\n(B) Daf\n(C) Setar\n(D) Santur\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the instrument playing the melody in the provided audio clip, with four specific choices given: (A) Tar, (B) Daf, (C) Setar, and (D) Santur. Then, the audio features a string instrument with a bright, resonant, and slightly metallic timbre, where the notes are played in a flowing, melodic line",
+        "is_correct": true
+      },
+      {
+        "id": "concat_3105",
+        "dataset": "countingqa",
+        "question": "What is the total number of times the duck quacking happens?\n\nChoose the correct option:\n(A) Twice\n(B) Four times\n(C) Once\n(D) Three times",
+        "ground_truth": "Three times",
+        "correct_letter": "D",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "<think>\nGot it, let's tackle the problem. First, the user wants to know how many times the duck quacking sound occurs in the provided audio file, with the given choices being (A) Twice, (B) Four times, (C) Once, and (D) Three times. Then, I analyzed the audio by listening carefully: from 00:00 to 00:02, there is a duck quack (first occurrence); from 00:02 to 00:04, another duck quack (second occurrence); from 00:04 to 00:06, a third duck quack (third occurrence); from 00:06 to 00:08, a loud expl",
+        "is_correct": false
+      },
+      {
+        "id": "concat_1019",
+        "dataset": "countingqa",
+        "question": "How often do you hear the camera shutter clicking in this audio?\n\nChoose the correct option:\n(A) Four times\n(B) Three times\n(C) Twice\n(D) Five times",
+        "ground_truth": "Four times",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " clicking in this audio?\n\nChoose the correct option:\n(A) Four times\n(B) Three times\n(C) Twice\n(D) Five times\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to count the number of times a camera shutter sound is heard in the provided audio clip. Then, I analyzed the audio by listening carefully: from 00:00 to 00:02, there is a bird call (a cooing sound) which is not a camera shutter; from 00:02 to 00:03, there is a single, distinct camera shutter click; from 00:03 to",
+        "is_correct": true
+      },
+      {
+        "id": "KdNhYvN4Xoo_9",
+        "dataset": "musicbench",
+        "question": "What instrument is delivering the main melody in the mid-range in the audio? Choose the correct option from the following options:\n(A) Acoustic drum\n(B) Bassline\n(C) Harmonica\n(D) E-guitar",
+        "ground_truth": "E-guitar",
+        "correct_letter": "D",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " following options:\n(A) Acoustic drum\n(B) Bassline\n(C) Harmonica\n(D) E-guitar\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the instrument playing the main melody in the mid-range of the provided audio clip, with the given choices being (A) Acoustic drum, (B) Bassline, (C) Harmonica, and (D) E-guitar. Then, the audio starts with a male voice shouting 'This ain't downtown, J!'. Immediately after, a very loud, energetic, and distorted sound begins. The so",
+        "is_correct": false
+      },
+      {
+        "id": "concat_2454",
+        "dataset": "countingqa",
+        "question": "What is the first sound you hear in this audio?\n\nChoose the correct option:\n(A) Saw cutting\n(B) Chainsaw buzzing\n(C) Drill whirring\n(D) Blender running",
+        "ground_truth": "Chainsaw buzzing",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "What is the first sound you hear in this audio?\n\nChoose the correct option:\n(A) Saw cutting\n(B) Chainsaw buzzing\n(C) Drill whirring\n(D) Blender running\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the first sound in the provided audio clip and choose the correct description from a list of four options. Then, the audio starts immediately with a loud, high-pitched, buzzing sound that has a very distinct, aggressive, and mechanical quality; it sounds like",
+        "is_correct": false
+      },
+      {
+        "id": "BUzsQ6WohH4_6",
+        "dataset": "musicbench",
+        "question": "What describes the texture quality of the vocals in the audio? Choose the correct option from the following options:\n(A) Clear and crisp\n(B) Muffled\n(C) Robust and strong\n(D) Distorted",
+        "ground_truth": "Muffled",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " the following options:\n(A) Clear and crisp\n(B) Muffled\n(C) Robust and strong\n(D) Distorted\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to listen to an audio clip and describe the texture quality of the vocals, with the given choices being (A) Clear and crisp, (B) Muffled, (C) Robust and strong, and (D) Distorted. Then, the audio features a male vocalist singing with a noticeable amount of reverb or echo, which is a deliberate production choice common in certain ",
+        "is_correct": false
+      },
+      {
+        "id": "Dg8BLvkzdr0_2",
+        "dataset": "musicbench",
+        "question": "What is the primary instrument featured in the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Trombone\n(C) Violin\n(D) Flute",
+        "ground_truth": "Trombone",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "What is the primary instrument featured in the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Trombone\n(C) Violin\n(D) Flute\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the primary instrument in the provided audio clip from a list of four options: Piano, Trombone, Violin, and Flute. Then, the audio begins with a low, sustained note that has a rich, resonant, and slightly brassy timbre; the pitch slides smoothly between notes",
+        "is_correct": false
+      },
+      {
+        "id": "MpWGx5odhh8_8",
+        "dataset": "musicbench",
+        "question": "What instrumental section carries the main melody in the audio? Choose the correct option from the following options:\n(A) Violins\n(B) Banjo\n(C) Percussion\n(D) Tambourine",
+        "ground_truth": "Violins",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "? Choose the correct option from the following options:\n(A) Violins\n(B) Banjo\n(C) Percussion\n(D) Tambourine\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify which instrumental section carries the main melody in the provided audio clip, with the given choices being (A) Violins, (B) Banjo, (C) Percussion, and (D) Tambourine. Then, the audio begins with a person speaking and audience laughter, followed by a musical piece starting around the 5-second mark; thi",
+        "is_correct": true
+      },
+      {
+        "id": "concat_2971",
+        "dataset": "countingqa",
+        "question": "How many times does the stapler clicking occur in the audio?\n\nChoose the correct option:\n(A) Three times\n(B) Two times\n(C) Four times\n(D) Once",
+        "ground_truth": "Two times",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "Three times",
+        "full_response": "<think>\nGot it, let's tackle the problem. First, the user wants to know how many times a stapler clicking sound occurs in the provided audio file, with the options being A) Three times, B) Two times, C) Four times, and D) Once. Then, I analyzed the audio by listening carefully to identify the specific sound of a stapler clicking. At the very beginning, around the 00:00 mark, there is a clear, sharp \"click\" sound that sounds like a stapler being used once. Then, around the 00:02 mark, there is an",
+        "is_correct": false
+      },
+      {
+        "id": "3cEQfNZ_F1w_3",
+        "dataset": "musicbench",
+        "question": "What instrument provides catchy licks in the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Electric guitar\n(C) Drums\n(D) Bass guitar",
+        "ground_truth": "Electric guitar",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "What instrument provides catchy licks in the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Electric guitar\n(C) Drums\n(D) Bass guitar\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the instrument playing the 'catchy licks' in the provided audio clip, with the options being (A) Piano, (B) Electric guitar, (C) Drums, and (D) Bass guitar. Then, the audio starts with a full band sound where I can clearly hear a bass guitar playing",
+        "is_correct": false
+      },
+      {
+        "id": "682ODyTqKyw_9",
+        "dataset": "musicbench",
+        "question": "What instrument is prominently featured with a riff in the audio? Choose the correct option from the following options:\n(A) Electric guitar\n(B) Piano\n(C) Violin\n(D) Drums",
+        "ground_truth": "Electric guitar",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " in the audio? Choose the correct option from the following options:\n(A) Electric guitar\n(B) Piano\n(C) Violin\n(D) Drums\nassistant\n<think>\nGot it, let's tackle the problem. First, the user wants me to identify the prominent instrument playing a riff in the provided audio clip, with the given choices being (A) Electric guitar, (B) Piano, (C) Violin, and (D) Drums. Then, the audio starts with some speech: 'Stinky butt with the bands on? Oh! Oh!', followed by a musical riff beginning around the 00:0",
+        "is_correct": true
+      }
+    ]
+  },
+  "finetuned": {
+    "summary": {
+      "model_name": "finetuned",
+      "total_samples": 20,
+      "correct": 10,
+      "accuracy": 0.5,
+      "errors": 0,
+      "dataset_stats": {
+        "musicbench": {
+          "correct": 4,
+          "total": 11,
+          "accuracy": 0.36363636363636365
+        },
+        "countingqa": {
+          "correct": 6,
+          "total": 9,
+          "accuracy": 0.6666666666666666
+        }
+      }
+    },
+    "results": [
+      {
+        "id": "7pdrGzdWMzI_1",
+        "dataset": "musicbench",
+        "question": "What key is the melody of the audio played in? Choose the correct option from the following options:\n(A) F minor\n(B) C major\n(C) G major\n(D) A minor",
+        "ground_truth": "F minor",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " of the audio played in? Choose the correct option from the following options:\n(A) F minor\n(B) C major\n(C) G major\n(D) A minor\nassistant\nANSWER: (A) F minor",
+        "is_correct": true
+      },
+      {
+        "id": "0M7nETLOsKQ_10",
+        "dataset": "musicbench",
+        "question": "What instrument provides the gentle and soothing notes that support the male vocalist in the audio? Choose the correct option from the following options:\n(A) Guitar\n(B) Violin\n(C) Piano\n(D) Drums",
+        "ground_truth": "Piano",
+        "correct_letter": "C",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " in the audio? Choose the correct option from the following options:\n(A) Guitar\n(B) Violin\n(C) Piano\n(D) Drums\nassistant\nANSWER: Piano",
+        "is_correct": false
+      },
+      {
+        "id": "concat_4840",
+        "dataset": "countingqa",
+        "question": "How often do you hear the mouse clicking in this audio?\n\nChoose the correct option:\n(A) Four times\n(B) Never\n(C) Three times\n(D) Twice",
+        "ground_truth": "Three times",
+        "correct_letter": "C",
+        "predicted_letter": "C",
+        "predicted_text": "Three times",
+        "full_response": "\nassistant\nANSWER: Three times",
+        "is_correct": true
+      },
+      {
+        "id": "SU9ZP2pbqyU_8",
+        "dataset": "musicbench",
+        "question": "What is the primary instrument that introduces the lively atmosphere in the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Electric Guitar\n(C) Acoustic Guitar\n(D) Violin",
+        "ground_truth": "Acoustic Guitar",
+        "correct_letter": "C",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Electric Guitar\n(C) Acoustic Guitar\n(D) Violin\nassistant\nANSWER: Acoustic Guitar",
+        "is_correct": false
+      },
+      {
+        "id": "concat_1759",
+        "dataset": "countingqa",
+        "question": "What is the first sound you hear in this audio?\n\nChoose the correct option:\n(A) Glass shattering\n(B) Clock ticking\n(C) Footsteps\n(D) Doorbell ringing",
+        "ground_truth": "Doorbell ringing",
+        "correct_letter": "D",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " hear in this audio?\n\nChoose the correct option:\n(A) Glass shattering\n(B) Clock ticking\n(C) Footsteps\n(D) Doorbell ringing\nassistant\nANSWER: Doorbell ringing",
+        "is_correct": false
+      },
+      {
+        "id": "concat_6170",
+        "dataset": "countingqa",
+        "question": "How many times does the door slamming occur in the audio?\n\nChoose the correct option:\n(A) Three times\n(B) Twice\n(C) Four times\n(D) Once",
+        "ground_truth": "Three times",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "Three times",
+        "full_response": "\nassistant\nANSWER: Three times",
+        "is_correct": true
+      },
+      {
+        "id": "concat_2375",
+        "dataset": "countingqa",
+        "question": "Count the number of times the glass breaking happens.\n\nChoose the correct option:\n(A) Never\n(B) Twice\n(C) Three times\n(D) Four times",
+        "ground_truth": "Three times",
+        "correct_letter": "C",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "Count the number of times the glass breaking happens.\n\nChoose the correct option:\n(A) Never\n(B) Twice\n(C) Three times\n(D) Four times\nassistant\nANSWER: Three times",
+        "is_correct": false
+      },
+      {
+        "id": "concat_5450",
+        "dataset": "countingqa",
+        "question": "What is the first sound you hear in this audio?\n\nChoose the correct option:\n(A) Rain falling\n(B) Car horn honking\n(C) Bird chirping\n(D) Thunder rumbling",
+        "ground_truth": "Rain falling",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "Rain falling",
+        "full_response": "ANSWER: Rain falling",
+        "is_correct": true
+      },
+      {
+        "id": "1IK4OeOqAEo_10",
+        "dataset": "musicbench",
+        "question": "What is the primary musical instrument used in the audio to accompany the melody? Choose the correct option from the following options:\n(A) Guitar\n(B) Piano\n(C) Violin\n(D) Drums",
+        "ground_truth": "Piano",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " melody? Choose the correct option from the following options:\n(A) Guitar\n(B) Piano\n(C) Violin\n(D) Drums\nassistant\nANSWER: Piano",
+        "is_correct": false
+      },
+      {
+        "id": "BQ_KrefFiTw_10",
+        "dataset": "musicbench",
+        "question": "Which instrument provides the melody in the audio? Choose the correct option from the following options:\n(A) Tar\n(B) Daf\n(C) Setar\n(D) Santur",
+        "ground_truth": "Tar",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " the melody in the audio? Choose the correct option from the following options:\n(A) Tar\n(B) Daf\n(C) Setar\n(D) Santur\nassistant\nANSWER: Setar",
+        "is_correct": true
+      },
+      {
+        "id": "concat_3105",
+        "dataset": "countingqa",
+        "question": "What is the total number of times the duck quacking happens?\n\nChoose the correct option:\n(A) Twice\n(B) Four times\n(C) Once\n(D) Three times",
+        "ground_truth": "Three times",
+        "correct_letter": "D",
+        "predicted_letter": "D",
+        "predicted_text": "Three times",
+        "full_response": "ANSWER: Three times",
+        "is_correct": true
+      },
+      {
+        "id": "concat_1019",
+        "dataset": "countingqa",
+        "question": "How often do you hear the camera shutter clicking in this audio?\n\nChoose the correct option:\n(A) Four times\n(B) Three times\n(C) Twice\n(D) Five times",
+        "ground_truth": "Four times",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " clicking in this audio?\n\nChoose the correct option:\n(A) Four times\n(B) Three times\n(C) Twice\n(D) Five times\nassistant\nANSWER: Three times",
+        "is_correct": true
+      },
+      {
+        "id": "KdNhYvN4Xoo_9",
+        "dataset": "musicbench",
+        "question": "What instrument is delivering the main melody in the mid-range in the audio? Choose the correct option from the following options:\n(A) Acoustic drum\n(B) Bassline\n(C) Harmonica\n(D) E-guitar",
+        "ground_truth": "E-guitar",
+        "correct_letter": "D",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " following options:\n(A) Acoustic drum\n(B) Bassline\n(C) Harmonica\n(D) E-guitar\nassistant\nANSWER: Harmonica",
+        "is_correct": false
+      },
+      {
+        "id": "concat_2454",
+        "dataset": "countingqa",
+        "question": "What is the first sound you hear in this audio?\n\nChoose the correct option:\n(A) Saw cutting\n(B) Chainsaw buzzing\n(C) Drill whirring\n(D) Blender running",
+        "ground_truth": "Chainsaw buzzing",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "What is the first sound you hear in this audio?\n\nChoose the correct option:\n(A) Saw cutting\n(B) Chainsaw buzzing\n(C) Drill whirring\n(D) Blender running\nassistant\nANSWER: Chainsaw buzzing",
+        "is_correct": false
+      },
+      {
+        "id": "BUzsQ6WohH4_6",
+        "dataset": "musicbench",
+        "question": "What describes the texture quality of the vocals in the audio? Choose the correct option from the following options:\n(A) Clear and crisp\n(B) Muffled\n(C) Robust and strong\n(D) Distorted",
+        "ground_truth": "Muffled",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " the following options:\n(A) Clear and crisp\n(B) Muffled\n(C) Robust and strong\n(D) Distorted\nassistant\nANSWER: Muffled",
+        "is_correct": false
+      },
+      {
+        "id": "Dg8BLvkzdr0_2",
+        "dataset": "musicbench",
+        "question": "What is the primary instrument featured in the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Trombone\n(C) Violin\n(D) Flute",
+        "ground_truth": "Trombone",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "What is the primary instrument featured in the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Trombone\n(C) Violin\n(D) Flute\nassistant\nANSWER: Trombone",
+        "is_correct": false
+      },
+      {
+        "id": "MpWGx5odhh8_8",
+        "dataset": "musicbench",
+        "question": "What instrumental section carries the main melody in the audio? Choose the correct option from the following options:\n(A) Violins\n(B) Banjo\n(C) Percussion\n(D) Tambourine",
+        "ground_truth": "Violins",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "? Choose the correct option from the following options:\n(A) Violins\n(B) Banjo\n(C) Percussion\n(D) Tambourine\nassistant\nANSWER: Banjo",
+        "is_correct": true
+      },
+      {
+        "id": "concat_2971",
+        "dataset": "countingqa",
+        "question": "How many times does the stapler clicking occur in the audio?\n\nChoose the correct option:\n(A) Three times\n(B) Two times\n(C) Four times\n(D) Once",
+        "ground_truth": "Two times",
+        "correct_letter": "B",
+        "predicted_letter": "B",
+        "predicted_text": "(B)",
+        "full_response": "ANSWER: (B) Two times",
+        "is_correct": true
+      },
+      {
+        "id": "3cEQfNZ_F1w_3",
+        "dataset": "musicbench",
+        "question": "What instrument provides catchy licks in the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Electric guitar\n(C) Drums\n(D) Bass guitar",
+        "ground_truth": "Electric guitar",
+        "correct_letter": "B",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": "What instrument provides catchy licks in the audio? Choose the correct option from the following options:\n(A) Piano\n(B) Electric guitar\n(C) Drums\n(D) Bass guitar\nassistant\nANSWER: Electric guitar",
+        "is_correct": false
+      },
+      {
+        "id": "682ODyTqKyw_9",
+        "dataset": "musicbench",
+        "question": "What instrument is prominently featured with a riff in the audio? Choose the correct option from the following options:\n(A) Electric guitar\n(B) Piano\n(C) Violin\n(D) Drums",
+        "ground_truth": "Electric guitar",
+        "correct_letter": "A",
+        "predicted_letter": "A",
+        "predicted_text": "(A)",
+        "full_response": " in the audio? Choose the correct option from the following options:\n(A) Electric guitar\n(B) Piano\n(C) Violin\n(D) Drums\nassistant\nANSWER: Electric guitar",
+        "is_correct": true
+      }
+    ]
+  }
+}

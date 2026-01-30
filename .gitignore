@@ -208,17 +208,42 @@ __marimo__/
 
 
 *.wav
-
-src/data/audio/*
-
-src/data/MMAR-meta.json
-
-models/*
-
-outputs/*
-
-src/data/reasonaqa/*
-
-# Submission artifacts
+*.mp3
 *.zip
+*.safetensors
+*.bin
+*.pt
+*.ckpt
+
+# Audio data
+src/data/audio/
+
+# Dataset files (keep MMAR-meta.json, ignore rest)
+src/data/combined_*.json
+src/data/reasonaqa/
+src/data/countingqa_audioskills/counting_audios/
+src/data/countingqa_audioskills/*.json
+src/data/musicbench_audioskills/*.json
+src/data/musicbench_audioskills/audio/
+src/data/tacos_audioskills/audio/
+src/data/tacos_audioskills/*.json
+
+# Model weights and adapters
+models/
+src/models/
+src/inference/merged_model/
+
+# All outputs (baseline, finetuned, submissions)
+outputs/
+outputs_finetuned_v2/
+src/outputs/
+src/inference/outputs*/
+
+# Analysis/debug JSON artifacts
+src/inference/*.json
+src/inference/*.log
+
+# Training outputs
+src/training/rest/outputs/
+
 
