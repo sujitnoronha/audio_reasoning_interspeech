@@ -64,12 +64,25 @@ def get_lora_config(
     r: int = 64,
     lora_alpha: int = 128,
     lora_dropout: float = 0.05,
+    lora_targets: str = "all",
 ) -> LoraConfig:
-    """Get LoRA configuration for PEFT."""
-    target_modules = [
-        "q_proj", "k_proj", "v_proj", "o_proj",
-        "gate_proj", "up_proj", "down_proj",
-    ]
+    """Get LoRA configuration for PEFT.
+
+    Args:
+        lora_targets: Which modules to target.
+            "all" = attention + MoE experts (default, current behavior)
+            "attention" = attention only (q/k/v/o_proj)
+            "moe" = MoE expert layers only (gate/up/down_proj)
+    """
+    if lora_targets == "attention":
+        target_modules = ["q_proj", "k_proj", "v_proj", "o_proj"]
+    elif lora_targets == "moe":
+        target_modules = ["gate_proj", "up_proj", "down_proj"]
+    else:  # "all"
+        target_modules = [
+            "q_proj", "k_proj", "v_proj", "o_proj",
+            "gate_proj", "up_proj", "down_proj",
+        ]
 
     return LoraConfig(
         r=r,
@@ -374,6 +387,7 @@ def train(
     lora_r: int = 64,
     lora_alpha: int = 128,
     lora_dropout: float = 0.05,
+    lora_targets: str = "all",
     # Training settings
     num_epochs: int = 2,
     batch_size: int = 1,
@@ -390,6 +404,8 @@ def train(
     max_samples: int = None,
     # Sequence length
     max_length: int = 4096,
+    # Resume
+    resume_from_checkpoint: Optional[str] = None,
 ):
     """Main training function."""
 
@@ -406,6 +422,7 @@ def train(
         r=lora_r,
         lora_alpha=lora_alpha,
         lora_dropout=lora_dropout,
+        lora_targets=lora_targets,
     )
     model = get_peft_model(model, lora_config)
     model.print_trainable_parameters()
@@ -487,7 +504,7 @@ def train(
 
     # Train
     logger.info("Starting training...")
-    trainer.train()
+    trainer.train(resume_from_checkpoint=resume_from_checkpoint if resume_from_checkpoint else None)
 
     # Generate save path with timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -540,6 +557,9 @@ def main():
                         help="LoRA alpha")
     parser.add_argument("--lora_dropout", type=float, default=0.05,
                         help="LoRA dropout")
+    parser.add_argument("--lora_targets", type=str, default="all",
+                        choices=["all", "attention", "moe"],
+                        help="LoRA target modules: 'all' (attention+MoE), 'attention' (q/k/v/o only), 'moe' (gate/up/down only)")
 
     # Training settings
     parser.add_argument("--num_epochs", type=int, default=2,
@@ -567,6 +587,10 @@ def main():
     parser.add_argument("--max_samples", type=int, default=None,
                         help="Limit training to first N samples (for testing)")
 
+    # Resume
+    parser.add_argument("--resume_from_checkpoint", type=str, default=None,
+                        help="Path to checkpoint to resume from (e.g., ./outputs/checkpoint-546)")
+
     args = parser.parse_args()
 
     train(
@@ -580,6 +604,7 @@ def main():
         lora_r=args.lora_r,
         lora_alpha=args.lora_alpha,
         lora_dropout=args.lora_dropout,
+        lora_targets=args.lora_targets,
         num_epochs=args.num_epochs,
         batch_size=args.batch_size,
         gradient_accumulation_steps=args.gradient_accumulation_steps,
@@ -590,6 +615,7 @@ def main():
         models_dir=args.models_dir,
         logging_dir=args.logging_dir,
         max_samples=args.max_samples,
+        resume_from_checkpoint=args.resume_from_checkpoint,
     )
 
 

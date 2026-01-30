@@ -112,6 +112,7 @@ def run_training(
     learning_rate: float,
     num_epochs: int,
     models_dir: str,
+    lora_targets: str = "all",
 ):
     """Run Phase 3: SFT Training."""
     logger.info("=" * 60)
@@ -127,6 +128,7 @@ def run_training(
         "--learning_rate", str(learning_rate),
         "--num_epochs", str(num_epochs),
         "--models_dir", models_dir,
+        "--lora_targets", lora_targets,
         "--use_4bit",
         "--use_flash_attention",
     ]
@@ -201,8 +203,9 @@ def run_rest_iteration(
         output_dir=train_output_dir,
         model_name_or_path=current_model,
         learning_rate=lr,
-        num_epochs=2,  # Fixed epochs per iteration
+        num_epochs=config.num_epochs,
         models_dir=config.models_dir,
+        lora_targets=config.lora_targets,
     )
 
     # Find the saved model (latest in models dir)
@@ -243,6 +246,8 @@ def main():
                         help="Number of ReST iterations")
     parser.add_argument("--num_samples", type=int, default=16,
                         help="Samples per problem (K)")
+    parser.add_argument("--num_epochs", type=int, default=2,
+                        help="Training epochs per ReST iteration")
     parser.add_argument("--temperature", type=float, default=0.9,
                         help="Sampling temperature")
     parser.add_argument("--filter_strategy", type=str, default="top_k",
@@ -255,6 +260,11 @@ def main():
     parser.add_argument("--vllm_base_url", type=str,
                         default="http://127.0.0.1:8901/v1",
                         help="vLLM server URL")
+
+    # LoRA settings
+    parser.add_argument("--lora_targets", type=str, default="all",
+                        choices=["all", "attention", "moe"],
+                        help="LoRA target modules: 'all' (attention+MoE), 'attention' (q/k/v/o only), 'moe' (gate/up/down only)")
 
     # Learning rate schedule
     parser.add_argument("--learning_rates", type=float, nargs="+",
@@ -272,10 +282,12 @@ def main():
         output_base_dir=args.output_base_dir,
         models_dir=args.models_dir,
         base_model=args.base_model,
+        num_epochs=args.num_epochs,
         num_samples_per_problem=args.num_samples,
         temperature=args.temperature,
         filter_strategy=args.filter_strategy,
         top_k=args.top_k,
+        lora_targets=args.lora_targets,
         vllm_base_url=args.vllm_base_url,
     )
 

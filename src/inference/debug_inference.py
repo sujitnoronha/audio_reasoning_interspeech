@@ -88,6 +88,10 @@ class DebugConfig:
         default=False,
         metadata={"help": "Skip loading adapter (test base model only)"}
     )
+    adapter_scale: float = field(
+        default=1.0,
+        metadata={"help": "Scaling factor for LoRA adapter weights before merging (e.g., 0.5 = half weight, 1.0 = full)"}
+    )
     verbose: bool = field(
         default=True,
         metadata={"help": "Show detailed output for each sample"}
@@ -325,33 +329,37 @@ ANSWER: [exact choice text]"""
 
 
 def get_prompt_v9(question: str, choices: List[str]) -> tuple[str, str]:
-    """V9: Fixes v8 Content Analysis regressions.
+    """V9: Based on v8 with targeted fixes for regression patterns.
     Changes from v8:
-    - Added explicit anti-Yes bias for binary questions
-    - Added 'MUST pick from choices only' constraint
-    - Simplified analysis approach to reduce overthinking on factual questions
-    - Added direct comprehension guidance
+    - Anti-overthinking: trust first impression, do not revise
+    - Counting: trust your count, do not revise downward
+    - Content/Events: if audio implies something happened, it happened
+    - Env Perception: connect sounds to real-world actions directly
+    - Emotion: do not default to negative/neutral
+    - Brief thinking encouraged
     """
     system = """You are an expert audio analyst. Analyze the audio carefully before answering.
 
 ANALYSIS APPROACH:
 - Listen to the full audio first, then analyze what you heard.
 - You may make reasonable inferences from tone, context, and conversational cues.
-- For factual questions (what happened, who said what, what is someone doing), trust the most direct evidence.
+- Distinguish between what you directly hear and what you infer. Both are valid.
+- Trust your first impression. Do NOT second-guess or revise your initial analysis.
 
 KEY GUIDELINES:
-- Counting: If asked "how many", count ONLY events you are confident about. Number them (1, 2, 3...). Pick the choice closest to your confident count.
-- Yes/No questions: Do NOT default to "Yes". Look for specific evidence SUPPORTING "Yes" before choosing it. If the evidence is ambiguous or absent, prefer "No".
-- Emotions: Analyze tone objectively. Sarcasm, frustration, and nervousness are common. Do not default to positive.
-- Context: Consider what is implied by the conversation, not just literal words.
+- Counting: Count each distinct event once (1, 2, 3...). Trust your count. Do NOT revise it downward. Pick the choice closest to your final count.
+- Events and Actions: If dialogue or sounds imply something happened (someone entered, something fell, an action was taken), assume it DID happen unless there is clear evidence otherwise.
+- Environment: Connect sounds directly to real-world actions. Splashing means water contact. Footsteps mean movement. Clicking means a mechanism. Do not overthink what caused a sound.
+- Emotions: Listen to tone of voice. Excitement, happiness, and enthusiasm are common. Do NOT default to negative or neutral emotions.
+- Context: Consider what is implied by the conversation, not just literal words. People often speak indirectly.
 - Sarcasm: Positive words with flat/dry/exaggerated tone often indicate sarcasm or dissatisfaction.
-- Comparisons: When asked which is "best" or "better", focus on clarity, smoothness, and technical quality.
+- Comparisons: When asked which is "best" or "better", focus on clarity, smoothness, and technical quality rather than personal preference.
 - Answer the EXACT question asked.
 
-CRITICAL RULES:
-- Your answer MUST be exactly one of the provided choices. Never combine multiple choices or invent your own.
-- If a question asks you to pick a segment, person, or item, you MUST pick one — do not say "none" or "all" unless that is a listed choice.
-- When uncertain, pick the choice with the strongest evidence.
+HOW TO DECIDE:
+- Evaluate each choice against your observations and inferences.
+- Pick the choice with the strongest evidence. When uncertain, prefer the most likely interpretation.
+- Your answer MUST be exactly one of the provided choices. Do not combine or invent answers.
 
 OUTPUT FORMAT:
 - Your response after thinking MUST be exactly one line: ANSWER: [exact choice text]
@@ -364,7 +372,7 @@ OUTPUT FORMAT:
 Choices:
 {choices_formatted}
 
-Think step by step inside <think> tags. Your visible response must be ONLY:
+Listen carefully to the audio. Think briefly inside <think> tags — focus on what you actually hear, not what you expect. Do not overthink or revise your initial observation. Your visible response must be ONLY:
 ANSWER: [exact choice text]"""
     return system, user
 
@@ -484,6 +492,11 @@ def load_model(config: DebugConfig):
     elif config.adapter_path:
         print(f"Loading adapter from {config.adapter_path}")
         model = PeftModel.from_pretrained(model, config.adapter_path)
+        if config.adapter_scale != 1.0:
+            print(f"Scaling adapter weights by {config.adapter_scale}")
+            for name, param in model.named_parameters():
+                if "lora_" in name:
+                    param.data *= config.adapter_scale
         if not config.use_4bit:
             print("Merging adapter into base model...")
             model = model.merge_and_unload()
@@ -909,7 +922,7 @@ def main():
                             'ground_truth': sample['ground_truth'],
                             'prediction': result['extracted_answer'],
                             'correct': is_correct,
-                            'thinking': result['thinking'][:500],
+                            'thinking': result['thinking'],
                         })
                     except Exception as e2:
                         print(f"  ERROR on {sample['id']}: {e2}")
@@ -952,10 +965,10 @@ def main():
 
                 result = run_inference(model, processor, sample, config, prefetched_inputs=prefetched)
 
-                print(f"\n[RAW OUTPUT (first 500 chars)]:")
-                print(result['raw_output'][:500])
-                print(f"\n[EXTRACTED THINKING (first 300 chars)]:")
-                print(result['thinking'][:300] if result['thinking'] else "(empty)")
+                print(f"\n[RAW OUTPUT]:")
+                print(result['raw_output'])
+                print(f"\n[EXTRACTED THINKING]:")
+                print(result['thinking'] if result['thinking'] else "(empty)")
                 print(f"\n[EXTRACTED ANSWER]: {result['extracted_answer']}")
 
                 is_correct = result['extracted_answer'].strip().lower() == sample['ground_truth'].strip().lower()
@@ -971,7 +984,7 @@ def main():
                     'ground_truth': sample['ground_truth'],
                     'prediction': result['extracted_answer'],
                     'correct': is_correct,
-                    'thinking': result['thinking'][:500],
+                    'thinking': result['thinking'],
                 })
 
                 output_path = f"debug_results_{config.prompt_version}.json"

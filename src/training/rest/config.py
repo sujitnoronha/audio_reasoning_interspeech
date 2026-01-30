@@ -79,6 +79,7 @@ class TrainConfig:
     lora_r: int = 64
     lora_alpha: int = 128
     lora_dropout: float = 0.05
+    lora_targets: str = "all"  # "all", "attention", or "moe"
 
     # Training settings
     output_dir: str = "./outputs/rest/training"
@@ -115,6 +116,9 @@ class ReSTrainingConfig:
     # Model
     base_model: str = "Qwen/Qwen3-Omni-30B-A3B-Thinking"
 
+    # Training settings
+    num_epochs: int = 2  # Epochs per ReST iteration
+
     # Generation settings
     num_samples_per_problem: int = 16
     temperature: float = 0.9
@@ -122,6 +126,9 @@ class ReSTrainingConfig:
     # Filter settings
     filter_strategy: str = "top_k"
     top_k: int = 3
+
+    # LoRA settings
+    lora_targets: str = "all"  # "all", "attention", or "moe"
 
     # vLLM settings
     vllm_base_url: str = "http://127.0.0.1:8901/v1"
