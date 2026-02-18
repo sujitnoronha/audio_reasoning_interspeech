@@ -1,6 +1,10 @@
 # Structured Prompting vs. Self-Training for Audio Reasoning Under Limited Data and Compute
 
-**Interspeech 2026**
+**Interspeech 2026** | [Leaderboard](https://www.codabench.org/competitions/12460/#/results-tab)
+
+<p align="center">
+  <img src="leaderboard.png" alt="MMAR Shared Task Leaderboard" width="800"/>
+</p>
 
 When labeled data is scarce and compute budgets are tight, how should practitioners improve multimodal language models on audio reasoning tasks? We systematically compare three approaches on the [MMAR benchmark](https://mmar-benchmark.github.io/) (1,000 audio MCQs across four reasoning layers) using [Qwen3-Omni-30B-A3B-Thinking](https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Thinking):
 
@@ -261,6 +265,10 @@ The prompt engineering effort was integrated with the ReST pipeline. Each prompt
 - **Temperature**: 0.1 (near-greedy) for all final evaluations; 0.9 for ReST candidate generation
 
 Known issue: Transformers Qwen3OmniMoe Config has a `use_sliding_window` bug that requires a patch during training.
+
+## Competition Leaderboard
+
+The submission to the [MMAR Shared Task at Interspeech 2026](https://www.codabench.org/competitions/12460/#/results-tab) used the **Structured Reasoning (v12)** prompt — the highest-accuracy approach from the experiments. To maximize submission accuracy, inference was sampled 15 times with the same prompt and the best prediction per sample was selected via majority voting across runs. This ensemble-over-runs strategy reduces variance from the model's stochastic decoding without requiring any additional training or model changes.
 
 ## References
 
