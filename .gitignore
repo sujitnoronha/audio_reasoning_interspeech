@@ -246,4 +246,31 @@ src/inference/*.log
 # Training outputs
 src/training/rest/outputs/
 
+# Generated results/analysis files
+*.csv
+all_eval_results.txt
+RESULTS_SUMMARY.md
+MISSING_EXPERIMENTS_PLAN.md
+analyze_all_results.py
+complete_and_summarize_results.py
+outputs_rest_*/
+outputs_baseline_*/
 
+# Paper drafts and intermediate artifacts
+docs/FINAL_UPDATES_SUMMARY.md
+docs/PAPER_UPDATES.md
+docs/TITLE_OPTIONS.md
+docs/example_paper.txt
+docs/main_abstract_new.txt
+docs/main_backup.tex
+docs/rest_analysis.tex
+docs/results_table.tex
+docs/subcategory_analysis.tex
+
+# Experiment scripts (not part of main codebase)
+run_rest_experiments.sh
+src/inference/test_rest_with_v12.py
+src/inference/rest_attention_only/*
+
+docs/main.tex
+docs/mybib.bib

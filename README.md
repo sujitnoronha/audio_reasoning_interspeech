@@ -1,25 +1,179 @@
-# Audio Reasoning - Interspeech 2026
+# Structured Prompting vs. Self-Training for Audio Reasoning Under Limited Data and Compute
 
-ReST-based fine-tuning of Qwen3-Omni-30B-A3B-Thinking for the MMAR (Multi-Modal Audio Reasoning) benchmark.
+**Interspeech 2026**
 
-## Overview
+When labeled data is scarce and compute budgets are tight, how should practitioners improve multimodal language models on audio reasoning tasks? We systematically compare three approaches on the [MMAR benchmark](https://mmar-benchmark.github.io/) (1,000 audio MCQs across four reasoning layers) using [Qwen3-Omni-30B-A3B-Thinking](https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Thinking):
 
-Our approach centers on **ReST (Reinforced Self-Training)** — an iterative Generate → Filter → Train pipeline that leverages the model's own correct reasoning traces to improve audio reasoning performance. The core idea is to distill high-quality reasoning behavior into the model through supervised fine-tuning on self-generated solutions, using LoRA adapters for parameter-efficient training.
+1. **Structured Prompt Engineering** — Zero training cost
+2. **Automated Prompt Optimization** (DSPy MIPROv2)
+3. **Reinforced Self-Training** (ReST) with LoRA
 
-To support this pipeline, we developed structured reasoning prompts that serve dual purposes: (1) guiding the model's chain-of-thought during ReST candidate generation to produce higher-quality training data, and (2) providing effective inference-time scaffolding for the finetuned model. Prompt design was driven by systematic error analysis across MMAR categories, with each iteration targeting specific failure modes uncovered during the ReST evaluation phases.
+## Key Results
 
-The MMAR benchmark consists of 1,000 audio MCQ samples across 4 categories (Signal, Perception, Semantic, Cultural).
+| Approach | Accuracy (%) | &Delta; Baseline |
+|----------|:---:|:---:|
+| Baseline | 67.1 | --- |
+| Baseline 4-bit | 65.7 | -1.4 |
+| **Structured Prompting** | | |
+| &nbsp;&nbsp;Expert Analyst | 68.3 | +1.2 |
+| &nbsp;&nbsp;Category-Aware | 68.1 | +1.0 |
+| &nbsp;&nbsp;Targeted Hints | 67.4 | +0.3 |
+| &nbsp;&nbsp;Structured Reasoning | **72.0** | **+4.9** |
+| **Automated Optimization** | | |
+| &nbsp;&nbsp;MIPROv2 Optimized | 63.3 | -3.8 |
+| **Self-Training (4-bit)** | | |
+| &nbsp;&nbsp;Full LoRA + basic | 64.7 | -2.4 |
+| &nbsp;&nbsp;Full LoRA + Structured Reasoning | 65.5 | -1.6 |
 
-### Approach Summary
+**Structured Reasoning achieves the best accuracy (+4.9%) at zero training cost**, while ReST self-training degrades performance by -2.4%. Applying the Structured Reasoning prompt to the ReST-trained model yields only 65.5%, confirming that fine-tuning damage cannot be reversed through prompting.
 
-1. **ReST (Reinforced Self-Training)** — Iterative self-training pipeline with learning zone filtering and LoRA adapters
-2. **Reasoning-Guided Prompt Design** — Structured prompts developed through error analysis to improve both training data quality and inference accuracy
-3. **DSPy MIPROv2 Optimization** — Automated prompt optimization to complement manual prompt design
-4. **Inference Tuning** — Temperature, max_tokens, and decoding strategy calibration
+## Key Findings
 
-## ReST (Reinforced Self-Training)
+- **Structured prompting improves 13 of 16 subcategories**, with the largest gains on Correlation Analysis (+12.0%) and Counting (+13.1%)
+- **ReST self-training regresses on 10 of 16 subcategories** — catastrophic forgetting outweighs learning zone gains
+- **Restructuring reasoning format outperforms adding domain rules** — the HEARD &rarr; ANALYSIS &rarr; ANSWER pipeline (+4.9%) beats explicit rules like counting guidelines (+1.2%) or targeted hints (+0.3%)
+- **Automated optimization (MIPROv2) underperforms baseline** — generic prompts lack the error-correction strategies discovered through manual analysis
 
-ReST is the primary training methodology. The pipeline iteratively generates candidate solutions, filters for correct reasoning traces, and fine-tunes the model on its own successful outputs.
+## Methodology
+
+### Structured Prompt Engineering
+
+Prompts were developed through iterative error analysis at zero training cost:
+
+| Prompt | Strategy | Key Idea |
+|--------|----------|----------|
+| Expert Analyst | Domain rules | Counting rules, emotion/sarcasm detection, comparison guidelines |
+| Category-Aware | Question-type detection | Classify question type first, then apply specialized strategy |
+| Targeted Hints | Subcategory guidance | Targeted hints only for weakest subcategories (music, correlation, spatial) |
+| Structured Reasoning | Reasoning format | HEARD &rarr; ANALYSIS &rarr; ANSWER with anti-looping constraint |
+
+### Reinforced Self-Training (ReST)
+
+Iterative Generate &rarr; Filter &rarr; Train pipeline:
+
+1. **Generate**: 16 diverse reasoning traces per problem (temp=0.9)
+2. **Filter**: Learning zone framework — train only on problems with 26-75% success rate
+3. **Train**: LoRA fine-tuning (rank=64, alpha=128, 4-bit NF4) targeting attention + MoE expert layers
+
+From 4,153 training problems, only 889 (21.4%) fell in the learning zone, yielding 4,361 training samples — insufficient for a 30B model.
+
+### DSPy MIPROv2
+
+Automated prompt optimization using meta-learning over prompt variations with stratified train/eval split from MMAR.
+
+## MMAR Benchmark
+
+| Category | Samples | Description |
+|----------|:---:|-------------|
+| Semantic Layer | 412 | Language understanding, speaker intent, dialogue comprehension |
+| Perception Layer | 404 | Counting, temporal analysis, spatial reasoning |
+| Cultural Layer | 141 | Music theory, regional accents, cultural context |
+| Signal Layer | 43 | Audio signal properties, frequency, noise analysis |
+
+## Project Structure
+
+```
+audio_reasoning_interspeech/
+├── docs/                              # Paper (main.tex, mybib.bib)
+├── src/
+│   ├── data/                          # Data download and preprocessing
+│   │   ├── MMAR-meta.json             # MMAR benchmark (1000 audio MCQ samples)
+│   │   ├── download_MMAR.py           # Download MMAR dataset
+│   │   ├── download_youtube_audio.py  # Download audio from YouTube
+│   │   ├── combine_datasets.py        # Combine training datasets
+│   │   ├── countingqa_audioskills/     # CountingQA dataset
+│   │   ├── musicbench_audioskills/     # MusicBench dataset
+│   │   └── tacos_audioskills/          # TaCos dataset
+│   ├── inference/
+│   │   ├── infer_vllm_baseline.py            # vLLM inference (all prompt variants)
+│   │   ├── infer_rest_with_prompts.py        # ReST model inference with prompt switching
+│   │   ├── infer_single_model_finetuned.py   # Finetuned model inference
+│   │   ├── infer_single_model_baseline.py    # Baseline inference
+│   │   └── optimize_prompts_dspy.py          # DSPy MIPROv2 optimization
+│   ├── training/
+│   │   ├── train_rest.py              # Standalone ReST training
+│   │   ├── utils.py                   # Model loading, LoRA setup, merging
+│   │   ├── data_utils.py              # Dataset utilities
+│   │   └── rest/                      # Full ReST pipeline
+│   │       ├── run_rest.py            # Orchestration script
+│   │       ├── config.py              # Configuration
+│   │       ├── generate.py            # Phase 1: Candidate generation
+│   │       ├── filter.py              # Phase 2: Evaluation & filtering
+│   │       ├── train.py               # Phase 3: SFT training
+│   │       └── evaluate.py            # Evaluation script
+│   └── analyze_errors_by_category.py
+└── requirements.txt
+```
+
+## Reproduction
+
+### 1. Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Download Data
+
+```bash
+cd src/data
+python download_MMAR.py
+python download_youtube_audio.py
+
+# (Optional) Auxiliary training datasets for ReST
+python countingqa_audioskills/augment_countingqa_mcq.py
+python musicbench_audioskills/download_musicbench.py
+python tacos_audioskills/download_tacos.py
+python combine_datasets.py
+```
+
+### 3. Prompt Engineering Experiments (vLLM)
+
+```bash
+# Start vLLM server
+vllm serve Qwen/Qwen3-Omni-30B-A3B-Thinking \
+    --port 8901 --host 127.0.0.1 --dtype bfloat16 \
+    --max-model-len 32768 --allowed-local-media-path / -tp 4
+
+# Run with any prompt variant: baseline, v8, v9, v10, v11, v12, dspy_v1, dspy_v2
+cd src/inference
+python infer_vllm_baseline.py \
+    --prompt v12 --temperature 0.1 --max_tokens 10000 \
+    --output_dir outputs/vllm_v12_temp0.1
+```
+
+### 4. ReST Training
+
+```bash
+cd src/training/rest
+python run_rest.py \
+    --data_path ../../data/combined_train.json \
+    --audio_dir ../../data \
+    --num_iterations 3 --num_samples 16 \
+    --filter_strategy top_k --top_k 3
+```
+
+### 5. ReST Inference with Prompt Switching
+
+```bash
+cd src/inference
+python infer_rest_with_prompts.py \
+    --adapter_path <path_to_adapter> \
+    --qwen3_omni_model_name_or_path Qwen/Qwen3-Omni-30B-A3B-Thinking \
+    --dataset_meta_path ../data/MMAR-meta.json \
+    --dataset_audio_prefix ../data \
+    --output_dir ../../outputs_rest \
+    --prompt_type v12 --use_4bit --merge_adapter --batch_size 1
+```
+
+## Hardware
+
+- **Training**: Single NVIDIA A100 80GB (4-bit quantization + LoRA)
+- **Inference (vLLM)**: Single A100 80GB with tensor parallelism=4
+
+---
+
+## ReST Fine-Tuning Details
 
 ### Pipeline
 
@@ -32,31 +186,29 @@ For each iteration:
 
 ### Learning Zone Framework
 
-A key component of the ReST pipeline is the learning zone framework, which selects training samples at the optimal difficulty level. Problems are categorized by model accuracy across 16 samples:
+Problems are categorized by model accuracy across 16 samples to select training data at the optimal difficulty level:
 
 | Category | Correct Rate | Training Action |
 |----------|-------------|-----------------|
 | too_hard | 0% (0/16) | Skip — no correct samples to learn from |
-| challenging | 1–25% | Skip — too few correct samples |
-| learning_zone | 26–75% | **Train** — optimal difficulty for learning |
-| almost_mastered | 76–99% | Skip — diminishing returns |
+| challenging | 1-25% | Skip — too few correct samples |
+| learning_zone | 26-75% | **Train** — optimal difficulty for learning |
+| almost_mastered | 76-99% | Skip — diminishing returns |
 | mastered | 100% (16/16) | Skip — already solved |
 
-This filtering ensures the model trains on problems where it can produce correct solutions but hasn't yet mastered them, maximizing the learning signal per training sample.
-
-### ReST Generation Statistics
+### Generation Statistics
 
 From the candidate generation phase (4,153 problems, 16 samples each):
 
 | Metric | Value |
 |--------|-------|
 | Total candidates | 66,448 |
-| Total correct | 43,182 (64.99%) |
-| Problems with ≥1 correct | 3,669 / 4,153 |
+| Total correct | 43,182 (65.0%) |
+| Problems with >=1 correct | 3,669 / 4,153 |
 | Learning zone problems | 889 (21.4%) |
 | Training samples selected | 4,361 |
 
-### ReST Configuration
+### Training Configuration
 
 | Parameter | Value |
 |-----------|-------|
@@ -73,255 +225,42 @@ From the candidate generation phase (4,153 problems, 16 samples each):
 | Optimizer | paged_adamw_8bit |
 | Batch size | 1 (gradient accumulation: 8) |
 
-### ReST Results and Iteration Insights
+### ReST Results and Insights
 
-The ReST pipeline achieved ~65.3% local accuracy on MMAR. While the base model with our best inference prompts reached ~67–72% (depending on prompt variant), the ReST training process yielded several important findings:
+The ReST pipeline achieved 64.7% on MMAR with a basic prompt, below the 67.1% baseline. Key observations:
 
-- The learning zone framework effectively identified the subset of problems where self-training provides the most signal (21.4% of problems fell in the optimal training zone).
-- Training data sourced from auxiliary audio reasoning datasets (CountingQA, MusicBench, TaCos) showed limited transfer to the MMAR test distribution, suggesting that domain-matched training data is critical for ReST to outperform strong prompting baselines.
-- The iterative nature of ReST (3 iterations with decaying learning rates) stabilized training and prevented catastrophic forgetting of the base model's capabilities.
+- **Limited learning zone coverage**: Only 21.4% of problems fell in the learning zone, yielding 4,361 training samples — insufficient for a 30B parameter model across 16 diverse subcategories.
+- **Distribution mismatch**: Auxiliary datasets (CountingQA, MusicBench, TaCos) showed limited transfer to MMAR's question distribution. The largest regression (Music Theory: -15.4%) occurred in a domain covered by MusicBench, suggesting distribution mismatch actively harms performance.
+- **Catastrophic forgetting**: ReST improved only 6 of 16 subcategories while degrading 10. Fine-tuning biased the model toward specific reasoning patterns at the expense of general capabilities.
+- **Prompting cannot rescue fine-tuning damage**: Applying the Structured Reasoning prompt to the ReST model yields 65.5% — a marginal gain over basic (64.7%) but far below the base model with the same prompt (72.0%). The 6.5% gap suggests fine-tuning degraded the model's ability to follow structured reasoning instructions.
 
-Known issue: Transformers Qwen3OmniMoe Config has a `use_sliding_window` bug that requires a patch during training.
+### Error-Driven Prompt Refinement
 
-## Reasoning-Guided Prompt Design
-
-The prompt engineering effort was tightly integrated with the ReST pipeline. Structured prompts served two roles: improving the quality of candidate reasoning traces during ReST generation, and providing effective inference-time scaffolding. Each prompt iteration was informed by error analysis from the ReST evaluation phases.
-
-All prompts are defined in `src/inference/infer_vllm_baseline.py` and served via vLLM (OpenAI-compatible API).
-
-### Prompt Evolution
-
-The prompt design followed an iterative cycle aligned with the ReST training loop: generate → evaluate → analyze errors → refine prompts → regenerate.
+The prompt engineering effort was integrated with the ReST pipeline. Each prompt iteration was informed by error analysis from ReST evaluation phases:
 
 | Variant | Strategy | Key Idea |
 |---------|----------|----------|
 | baseline | Minimal | "Think step-by-step, answer must be correct" — no structured guidance |
-| v8 | Expert analyst | Counting rules, emotion/sarcasm detection, comparison guidelines, strict output format |
+| v8 (Expert Analyst) | Expert analyst | Counting rules, emotion/sarcasm detection, comparison guidelines, strict output format |
 | v9 | v8 + anti-overthinking | Added "Trust your first impression, do NOT second-guess" to reduce reasoning loops |
-| v10 | Category-aware | Question-type detection with specialized strategies (counting, music, timing, spatial, emotions, anomaly, cultural, counterfactual) |
-| v11 | v8 + targeted hints | v8 core + added guidance for weak subcategories (music/instruments, correlation/cause-effect, spatial) |
-| v12 | Structured reasoning | HEARD → ANALYSIS → ANSWER format with anti-looping rules ("Do NOT loop back with Wait or Actually") |
+| v10 (Category-Aware) | Category-aware | Question-type detection with specialized strategies per type |
+| v11 (Targeted Hints) | v8 + targeted hints | v8 core + guidance for weak subcategories (music, correlation, spatial) |
+| v12 (Structured Reasoning) | Structured reasoning | HEARD &rarr; ANALYSIS &rarr; ANSWER format with anti-looping rules |
 
-### Error-Driven Prompt Refinement
+**v8** addressed counting errors (model merged overlapping events), emotion misidentification (defaulted to positive), and subjective comparisons.
 
-**v8** was developed after analyzing failure patterns in the initial ReST generation phase:
-- Counting questions: model merged overlapping events → added "number each distinct occurrence (1, 2, 3...)"
-- Emotion questions: model defaulted to positive → added "Sarcasm, frustration, and nervousness are common"
-- Comparison questions: model used subjective preference → added "focus on clarity, smoothness, and technical quality"
+**v10** introduced category-aware reasoning but the long prompt sometimes caused question-type misclassification.
 
-**v9** addressed overthinking patterns observed in reasoning traces — loops where the model says "Wait, actually..." and reverses correct answers. Anti-revision instructions were added, but this also suppressed legitimate self-correction.
-
-**v10** introduced category-aware reasoning: detect the question type first, then apply a specialized analysis strategy. This covered 11 question types but the prompt became long and the model sometimes misclassified the question type, reducing candidate quality.
-
-**v11** was a targeted refinement — kept v8's proven core and added specific guidance only for the weakest subcategories identified during ReST evaluation: Music & Instruments, Correlation & Cause-Effect, and Spatial reasoning.
-
-**v12** restructured the reasoning trace format itself to improve both training data quality and inference consistency:
-1. **HEARD**: Describe exactly what you hear (sounds, speech, music, tone, background noise)
-2. **ANALYSIS**: Connect observations to the question, evaluate each choice
-3. **ANSWER**: State which choice best fits and why
-
-This structured format produced more consistent reasoning traces during ReST generation and reduced overthinking loops at inference time.
-
-## DSPy MIPROv2 Optimization
-
-To complement the manual prompt design, we used DSPy's MIPROv2 optimizer for automated prompt optimization (`src/inference/optimize_prompts_dspy.py`).
-
-### Setup
-
-- **Signature**: `AudioMCQ` with inputs: question, choices, category, sub_category, modality, language → output: answer
-- **Module**: `AudioMCQModule` bridges DSPy optimization with vLLM audio inference calls
-- **Data split**: Stratified train/eval split by category from MMAR-meta.json
-- **Optimizer**: MIPROv2 with automatic instruction tuning
-
-### DSPy Prompt Results
-
-Two optimized prompts were generated:
-
-- **dspy_v1**: Simple, direct instruction — "Listen to the audio and answer the multiple-choice question." Minimal system prompt with standard MCQ framing.
-- **dspy_v2**: Cross-layer reasoning — "Integrate Signal, Semantic, Perception, and Cultural layers." Encourages the model to reason across audio analysis dimensions.
-
-Optimized prompts are saved in `outputs/dspy_optimized/`:
-- `optimized_prompts.json` / `optimized_prompts_module.json` (v1)
-- `optimized_prompts_v2.json` / `optimized_prompts_v2_module.json` (v2)
-
-## Inference Tuning
-
-### Temperature
-
-- **temp=0.1** (near-greedy): Used for all final submissions. Low temperature reduces variability and produces more deterministic answers.
-- **temp=0.9**: Used during ReST candidate generation to maximize diversity of reasoning traces.
-
-### Max Tokens
-
-- **Default (no limit)**: Full reasoning traces, sometimes exceeding 10,000 character limit for competition submission.
-- **max_tokens=4096**: Constrained traces improved leaderboard reasoning quality scores (54.15 vs 52.55).
-- **max_tokens=2000**: Used to rerun samples with naturally long traces (>9,000 chars) to keep them under the 10,000 char competition limit without post-hoc editing.
+**v12** restructured the reasoning format itself rather than adding more rules — imposing a strict three-step structure with anti-looping constraints ("Do NOT loop back with Wait or Actually"). This produced the best results (+4.9%).
 
 ### Inference Details
 
-- **vLLM server**: Qwen3-Omni-30B-A3B-Thinking served via vLLM on port 8901, OpenAI-compatible API, Single A100 80GB
-- **Thinking traces**: vLLM returns thinking inside `<think>` tags within the `content` field (not in `reasoning_content`)
-- **Answer extraction**: Regex-based extraction of `ANSWER: [choice]` from model output, with fuzzy matching to exact choices (stripped/case-insensitive)
+- **vLLM server**: Qwen3-Omni served via vLLM on port 8901, OpenAI-compatible API, single A100 80GB
+- **Thinking traces**: vLLM returns thinking inside `<think>` tags within the `content` field
+- **Answer extraction**: Regex-based extraction of `ANSWER: [choice]` from model output, with fuzzy matching
+- **Temperature**: 0.1 (near-greedy) for all final evaluations; 0.9 for ReST candidate generation
 
-## MMAR Benchmark Categories
-
-| Category | Samples | Description |
-|----------|---------|-------------|
-| Semantic Layer | 412 | Language understanding, speaker intent, dialogue comprehension |
-| Perception Layer | 404 | Counting, temporal analysis, spatial reasoning, audio quality |
-| Cultural Layer | 141 | Music theory, regional accents, cultural context |
-| Signal Layer | 43 | Audio signal properties, frequency, noise analysis |
-
-### Per-Category Accuracy (v12 prompt, local GT)
-
-Weakest subcategories identified through error analysis:
-- Audio Difference Analysis: 25%
-- Imagination: 50%
-- Temporal Analysis: 53.6%
-- Music Theory: 54%
-
-Note: Local ground truth (MMAR-meta.json) is noisy and does not perfectly match the hidden test set. Some answers in the local GT are not even valid choices. Local accuracy is estimated to be ~1–2% pessimistic compared to the hidden test.
-
-## Project Structure
-
-```
-audio_reasoning_interspeech/
-├── src/
-│   ├── data/                          # Data download and preprocessing
-│   │   ├── MMAR-meta.json             # MMAR benchmark (1000 audio MCQ samples)
-│   │   ├── download_MMAR.py           # Download MMAR dataset
-│   │   ├── download_youtube_audio.py  # Download audio from YouTube
-│   │   ├── combine_datasets.py        # Combine multiple training datasets
-│   │   ├── countingqa_audioskills/     # CountingQA dataset scripts
-│   │   ├── musicbench_audioskills/     # MusicBench dataset scripts
-│   │   └── tacos_audioskills/          # TaCos dataset scripts
-│   ├── inference/
-│   │   ├── infer_vllm_baseline.py            # vLLM inference with all prompt variants
-│   │   ├── optimize_prompts_dspy.py          # DSPy MIPROv2 prompt optimization
-│   │   ├── infer_single_model_baseline.py    # Baseline inference (local model)
-│   │   ├── infer_single_model_finetuned.py   # Finetuned model inference
-│   │   ├── infer_single_model_finetuned_v7.py
-│   │   ├── infer_single_model_finetuned_v8.py
-│   │   ├── debug_inference.py
-│   │   ├── wait_and_run.sh
-│   │   └── outputs/                   # Inference outputs per experiment
-│   │       ├── vllm_v8_temp0.1/
-│   │       ├── vllm_v8_temp0.1_max4k/
-│   │       ├── vllm_v12_temp0.1/
-│   │       └── v8_finetuned/
-│   ├── training/
-│   │   ├── train_rest.py              # Standalone ReST training
-│   │   ├── train_grpo.py              # GRPO training
-│   │   ├── utils.py                   # Model loading, LoRA setup, merging
-│   │   ├── data_utils.py              # Dataset utilities
-│   │   └── rest/                      # Full ReST pipeline
-│   │       ├── run_rest.py            # Orchestration script
-│   │       ├── config.py              # Configuration
-│   │       ├── generate.py            # Phase 1: Candidate generation
-│   │       ├── filter.py              # Phase 2: Evaluation & filtering
-│   │       ├── train.py               # Phase 3: SFT training
-│   │       └── evaluate.py            # Evaluation script
-│   ├── analyze_errors_by_category.py
-│   └── validate_results_zip.py
-├── outputs/
-│   └── dspy_optimized/                # DSPy optimized prompts
-├── docs/                              # Bug reports and analysis
-├── notebooks/                         # Debug notebooks
-└── requirements.txt
-```
-
-## Steps to Reproduce
-
-### 1. Setup
-
-```bash
-pip install -r requirements.txt
-```
-
-### 2. Download Data
-
-```bash
-cd src/data
-
-# Download MMAR benchmark dataset
-python download_MMAR.py
-
-# Download audio files
-python download_youtube_audio.py
-
-# (Optional) Download additional training datasets
-python countingqa_audioskills/augment_countingqa_mcq.py
-python musicbench_audioskills/download_musicbench.py
-python tacos_audioskills/download_tacos.py
-
-# Combine all training datasets
-python combine_datasets.py
-```
-
-### 3. Start vLLM Server
-
-```bash
-vllm serve Qwen/Qwen3-Omni-30B-A3B-Thinking \
-    --port 8901 \
-    --host 127.0.0.1 \
-    --dtype bfloat16 \
-    --max-model-len 32768 \
-    --allowed-local-media-path / \
-    -tp 4
-```
-
-### 4. Run Inference (Prompt Engineering)
-
-```bash
-cd src/inference
-
-# Run with any prompt variant: baseline, v8, v9, v10, v11, v12, dspy_v1, dspy_v2
-python infer_vllm_baseline.py \
-    --prompt v12 \
-    --temperature 0.1 \
-    --max_tokens 10000 \
-    --output_dir outputs/vllm_v12_temp0.1
-```
-
-### 5. Run DSPy Prompt Optimization
-
-```bash
-cd src/inference
-
-python optimize_prompts_dspy.py \
-    --meta_path ../data/MMAR-meta.json \
-    --audio_dir ../data \
-    --output_dir ../../outputs/dspy_optimized
-```
-
-### 6. Run ReST Training Pipeline
-
-```bash
-cd src/training/rest
-
-python run_rest.py \
-    --data_path ../../data/combined_train.json \
-    --audio_dir ../../data \
-    --num_iterations 3 \
-    --num_samples 16 \
-    --filter_strategy top_k \
-    --top_k 3
-```
-
-### 7. Validate and Create Submission
-
-```bash
-python validate_results_zip.py \
-    --prediction_path src/inference/outputs/vllm_v12_temp0.1/result.jsonl \
-    --create_zip
-```
-
-Submission format: zip containing `result.jsonl` with fields `id`, `thinking_prediction` (< 10,000 chars), `answer_prediction`.
-
-## Hardware Requirements
-
-- **Training**: Single A100 80GB with 4-bit quantization + LoRA
-- **Inference / vLLM serving**: Single A100 80GB
+Known issue: Transformers Qwen3OmniMoe Config has a `use_sliding_window` bug that requires a patch during training.
 
 ## References
 
